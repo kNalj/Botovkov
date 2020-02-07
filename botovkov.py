@@ -13,8 +13,8 @@ class Botovkov:
 
         """
         print("Starting Botovkov ...")
-        self.reddit = praw.Reddit(client_id="anqg4ujATRhlIQ",
-                                  client_secret="vPVVW8EsONdz1P0VgQ1ShRGH8pE",
+        self.reddit = praw.Reddit(client_id=os.environ["REDDIT_ID"],
+                                  client_secret=os.environ["REDDIT_SECRET"],
                                   password=os.environ["REDDIT_PASSWORD"],
                                   user_agent="Maxim",
                                   username=os.environ["REDDIT_USERNAME"])
