@@ -4,6 +4,10 @@ import curses
 import praw
 from random import randint, choice
 from slack import RTMClient
+import json
+import urllib.request as ur
+from datetime import datetime
+import corona
 
 
 class Botovkov:
@@ -25,6 +29,7 @@ class Botovkov:
         self.fun_fact_count = 0
         self.jokes = None
         self.facts = None
+        self.corona_data = None
 
     def run(self):
         """
@@ -62,7 +67,7 @@ class Botovkov:
         user_input = full_msg.split(" ")
         command = user_input[0][1:]
         if len(user_input) > 1:
-            param = full_msg.split(" ")[1]
+            param = " ".join(full_msg.split(" ")[1:])
         else:
             param = ""
         return command, param
@@ -135,6 +140,31 @@ class Botovkov:
             lst = curses.curses[list(curses.curses)[key]]
             return [lst[randint(0, len(lst) - 1)]]
             # return [curses.curses[lang][randint(0, len(curses.curses[lang]))]]
+
+    def corona(self, country=""):
+        """
+
+        :param country:
+        :return:
+        """
+        if self.corona_data is None:
+            user_agent = "Mozilla / 5.0(Windows NT 10.0; Win64; x64; rv: 73.0) Gecko / 20100101 Firefox / 73.0"
+            headers = {"User-Agent": user_agent}
+            url = "https://coronavirus-6728.gserveri.workers.dev/"
+
+            req = ur.Request(url=url, headers=headers)
+            html = ur.urlopen(req)
+
+            data = json.loads(html.read().decode())
+            self.corona_data = corona.World(world=True, *data)
+
+        if country == "":
+            return [str(self.corona_data)]
+        else:
+            if country in self.corona_data.countries:
+                return [str(self.corona_data.countries[country])]
+            else:
+                return ["No data on country: {}".format(country)]
 
 
 def main():
